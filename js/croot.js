@@ -215,3 +215,47 @@ function convertToGeoJSON(response) {
     })),
   };
 }
+
+//Properties
+
+document.getElementById("regionSearch").addEventListener("click", async () => {
+  // Ambil koordinat dari peta
+  const latitude = ""; // Masukkan cara mendapatkan latitude dari peta
+  const longitude = ""; // Masukkan cara mendapatkan longitude dari peta
+
+  try {
+      // Panggil API dengan latitude & longitude
+      const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/itungin/region", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+              long: longitude,
+              lat: latitude,
+          }),
+      });
+
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Pastikan data memiliki fitur
+      if (data.features && data.features.length > 0) {
+          const properties = data.features[0].properties;
+
+          // Tampilkan properti daerah di box
+          document.getElementById("district").textContent = properties.district || "N/A";
+          document.getElementById("province").textContent = properties.province || "N/A";
+          document.getElementById("sub-district").textContent = properties.sub_district || "N/A";
+          document.getElementById("village").textContent = properties.village || "N/A";
+      } else {
+          alert("Data tidak ditemukan untuk lokasi ini.");
+      }
+  } catch (error) {
+      console.error("Error fetching region data:", error);
+      alert("Terjadi kesalahan saat mengambil data daerah.");
+  }
+});

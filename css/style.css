@@ -111,3 +111,8 @@ body {
 .ol-popup-closer:after {
   content: "✖";
 }
+
+#region-info {
+  font-size: 14px;
+  line-height: 1.5;
+}
