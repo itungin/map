@@ -63,6 +63,10 @@ map.on("click", async (event) => {
   console.log(`Longitude: ${longitude}, Latitude: ${latitude}`);
   clickedCoordinates = [longitude, latitude]; // Save the clicked coordinates
 
+  // Store coordinates in localStorage
+  localStorage.setItem("longitude", longitude);
+  localStorage.setItem("latitude", latitude);
+
   // Add marker
   addMarker(coordinates);
 });
@@ -94,18 +98,62 @@ document.getElementById("btn-distance").addEventListener("click", async () => {
 
 // Region
 document.getElementById("regionSearch").addEventListener("click", async () => {
-  if (clickedCoordinates) {
-    const [longitude, latitude] = clickedCoordinates;
+  const longitude = localStorage.getItem("longitude");
+  const latitude = localStorage.getItem("latitude");
 
-    // Kosongkan jalan sebelum menampilkan region
+  if (longitude && latitude) {
+    // Clear previous roads before displaying region
     roadsSource.clear();
 
-    // Fetch GeoJSON dari API
+    // Fetch GeoJSON from API
     const geoJSON = await fetchRegionGeoJSON(longitude, latitude);
     if (geoJSON) {
-      displayPolygonOnMap(geoJSON); // Tampilkan poligon dari GeoJSON
+      displayPolygonOnMap(geoJSON); // Display polygon from GeoJSON
     } else {
       alert("Failed to fetch region data. Please try again.");
+    }
+
+    // Fetch properties for the region
+    try {
+      const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/itungin/region", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          long: longitude,
+          lat: latitude,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Response data:", data); // Debugging
+
+      // Store properties in localStorage
+      if (data.features && data.features.length > 0) {
+        const properties = data.features[0].properties;
+
+        // Store properties in localStorage
+        localStorage.setItem("district", properties.district || "N/A");
+        localStorage.setItem("province", properties.province || "N/A");
+        localStorage.setItem("sub_district", properties.sub_district || "N/A");
+        localStorage.setItem("village", properties.village || "N/A");
+
+        // Display properties in UI
+        document.getElementById("district").textContent = properties.district || "N/A";
+        document.getElementById("province").textContent = properties.province || "N/A";
+        document.getElementById("sub-district").textContent = properties.sub_district || "N/A";
+        document.getElementById("village").textContent = properties.village || "N/A";
+      } else {
+        alert("Data tidak ditemukan untuk lokasi ini.");
+      }
+    } catch (error) {
+      console.error("Error fetching region data:", error);
+      alert("Terjadi kesalahan saat mengambil data daerah.");
     }
   } else {
     alert("Please click on the map to select a region.");
@@ -174,23 +222,21 @@ async function fetchRegionGeoJSON(longitude, latitude) {
   }
 }
 
-// Fungsi untuk menampilkan poligon pada peta
+// Function to display polygon on map
 function displayPolygonOnMap(geoJSON) {
-  // Parse GeoJSON ke dalam fitur OpenLayers
   const features = new GeoJSON().readFeatures(geoJSON, {
-    dataProjection: "EPSG:4326", // Proyeksi data GeoJSON
-    featureProjection: "EPSG:3857", // Proyeksi untuk peta
+    dataProjection: "EPSG:4326", // GeoJSON projection
+    featureProjection: "EPSG:3857", // Map projection
   });
 
-  polygonSource.clear(); // Hapus semua poligon sebelumnya
-  polygonSource.addFeatures(features); // Tambahkan fitur baru ke sumber
+  polygonSource.clear(); // Clear previous polygons
+  polygonSource.addFeatures(features); // Add new features
 
-  // Zoom ke area poligon jika ada
   if (features.length > 0) {
     const extent = polygonSource.getExtent();
     map.getView().fit(extent, { padding: [50, 50, 50, 50] });
   } else {
-    alert("Tidak ada data region yang ditemukan.");
+    alert("No region data found.");
   }
 }
 
@@ -215,50 +261,3 @@ function convertToGeoJSON(response) {
     })),
   };
 }
-
-
-//Properties
-// document.getElementById("regionSearch").addEventListener("click", async () => {
-//   // Ambil koordinat dari peta
-//   const latitude = map.getCenter().lat; 
-//   const longitude = map.getCenter().lng;
-
-  // console.log(`Longitude: ${longitude}, Latitude: ${latitude}`); // Debugging
-
-  // try {
-  //     // Panggil API dengan latitude & longitude
-  //     const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/itungin/region", {
-  //         method: "POST",
-  //         headers: {
-  //             "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({
-  //             long: longitude,
-  //             lat: latitude,
-  //         }),
-  //     });
-
-  //     if (!response.ok) {
-  //         throw new Error(`HTTP error! Status: ${response.status}`);
-  //     }
-
-  //     const data = await response.json();
-  //     console.log("Response data:", data); // Debugging
-
-  //     // Pastikan data memiliki fitur
-  //     if (data.features && data.features.length > 0) {
-  //         const properties = data.features[0].properties;
-
-  //         // Tampilkan properti daerah di box
-  //         document.getElementById("district").textContent = properties.district || "N/A";
-  //         document.getElementById("province").textContent = properties.province || "N/A";
-  //         document.getElementById("sub-district").textContent = properties.sub_district || "N/A";
-  //         document.getElementById("village").textContent = properties.village || "N/A";
-  //     } else {
-  //         alert("Data tidak ditemukan untuk lokasi ini.");
-  //     }
-  // } catch (error) {
-  //     console.error("Error fetching region data:", error);
-  //     alert("Terjadi kesalahan saat mengambil data daerah.");
-  // };
-
