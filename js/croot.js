@@ -112,6 +112,8 @@ document.getElementById("regionSearch").addEventListener("click", async () => {
   }
 
   //properties
+  const latitude = map.getCenter().lat; 
+  const longitude = map.getCenter().lng;
   console.log(`Longitude: ${longitude}, Latitude: ${latitude}`); // Debugging
 
   try {
