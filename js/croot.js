@@ -93,31 +93,14 @@ document.getElementById("btn-distance").addEventListener("click", async () => {
 });
 
 // Region
+// Properties section
 document.getElementById("regionSearch").addEventListener("click", async () => {
-  if (clickedCoordinates) {
-    const [longitude, latitude] = clickedCoordinates;
-
-    // Kosongkan jalan sebelum menampilkan region
-    roadsSource.clear();
-
-    // Fetch GeoJSON dari API
-    const geoJSON = await fetchRegionGeoJSON(longitude, latitude);
-    if (geoJSON) {
-      displayPolygonOnMap(geoJSON); // Tampilkan poligon dari GeoJSON
-    } else {
-      alert("Failed to fetch region data. Please try again.");
-    }
-  } else {
-    alert("Please click on the map to select a region.");
-  }
-
-  //properties
-  const latitude = map.getCenter().lat; 
-  const longitude = map.getCenter().lng;
+  // Get coordinates from the map center
+  const [longitude, latitude] = map.getView().getCenter();
   console.log(`Longitude: ${longitude}, Latitude: ${latitude}`); // Debugging
 
   try {
-      // Panggil API dengan latitude & longitude
+      // Call the API with latitude & longitude
       const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/itungin/region", {
           method: "POST",
           headers: {
@@ -136,11 +119,11 @@ document.getElementById("regionSearch").addEventListener("click", async () => {
       const data = await response.json();
       console.log("Response data:", data); // Debugging
 
-      // Pastikan data memiliki fitur
+      // Ensure data has features
       if (data.features && data.features.length > 0) {
           const properties = data.features[0].properties;
 
-          // Tampilkan properti daerah di box
+          // Display the region properties
           document.getElementById("district").textContent = properties.district || "N/A";
           document.getElementById("province").textContent = properties.province || "N/A";
           document.getElementById("sub-district").textContent = properties.sub_district || "N/A";
@@ -151,8 +134,9 @@ document.getElementById("regionSearch").addEventListener("click", async () => {
   } catch (error) {
       console.error("Error fetching region data:", error);
       alert("Terjadi kesalahan saat mengambil data daerah.");
-  };
+  }
 });
+
 
 // Function to fetch roads
 async function fetchRoads(longitude, latitude, maxDistance) {
