@@ -98,67 +98,64 @@ document.getElementById("btn-distance").addEventListener("click", async () => {
 
 // Region
 document.getElementById("regionSearch").addEventListener("click", async () => {
-  const longitude = localStorage.getItem("longitude");
-  const latitude = localStorage.getItem("latitude");
+  if (clickedCoordinates) {
+    const [longitude, latitude] = clickedCoordinates;
 
-  if (longitude && latitude) {
-    // Clear previous roads before displaying region
+    // Kosongkan jalan sebelum menampilkan region
     roadsSource.clear();
 
-    // Fetch GeoJSON from API
-    const geoJSON = await fetchRegionGeoJSON(longitude, latitude);
-    if (geoJSON) {
-      displayPolygonOnMap(geoJSON); // Display polygon from GeoJSON
-    } else {
-      alert("Failed to fetch region data. Please try again.");
-    }
-
-    // Fetch properties for the region
     try {
-      const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/itungin/region", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          long: longitude,
-          lat: latitude,
-        }),
-      });
+      // Fetch GeoJSON data for the region
+      const geoJSON = await fetchRegionGeoJSON(longitude, latitude);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
+      if (geoJSON) {
+        // Display polygon on the map
+        displayPolygonOnMap(geoJSON);
 
-      const data = await response.json();
-      console.log("Response data:", data); // Debugging
+        // Fetch and store region properties
+        const regionProperties = geoJSON.features[0]?.properties;
+        if (regionProperties) {
+          // Save longitude, latitude, and properties to localStorage
+          localStorage.setItem("longitude", longitude);
+          localStorage.setItem("latitude", latitude);
+          localStorage.setItem("district", regionProperties.district || "N/A");
+          localStorage.setItem("province", regionProperties.province || "N/A");
+          localStorage.setItem("sub_district", regionProperties.sub_district || "N/A");
+          localStorage.setItem("village", regionProperties.village || "N/A");
 
-      // Store properties in localStorage
-      if (data.features && data.features.length > 0) {
-        const properties = data.features[0].properties;
-
-        // Store properties in localStorage
-        localStorage.setItem("district", properties.district || "N/A");
-        localStorage.setItem("province", properties.province || "N/A");
-        localStorage.setItem("sub_district", properties.sub_district || "N/A");
-        localStorage.setItem("village", properties.village || "N/A");
-
-        // Display properties in UI
-        document.getElementById("district").textContent = properties.district || "N/A";
-        document.getElementById("province").textContent = properties.province || "N/A";
-        document.getElementById("sub-district").textContent = properties.sub_district || "N/A";
-        document.getElementById("village").textContent = properties.village || "N/A";
+          // Update UI with stored data
+          updateRegionInfo();
+        }
       } else {
-        alert("Data tidak ditemukan untuk lokasi ini.");
+        alert("Failed to fetch region data. Please try again.");
       }
     } catch (error) {
       console.error("Error fetching region data:", error);
-      alert("Terjadi kesalahan saat mengambil data daerah.");
+      alert("An error occurred while fetching region data.");
     }
   } else {
     alert("Please click on the map to select a region.");
   }
 });
+
+// Function to update region information on the card
+function updateRegionInfo() {
+  // Retrieve data from localStorage
+  const longitude = localStorage.getItem("longitude");
+  const latitude = localStorage.getItem("latitude");
+  const district = localStorage.getItem("district");
+  const province = localStorage.getItem("province");
+  const subDistrict = localStorage.getItem("sub_district");
+  const village = localStorage.getItem("village");
+
+  // Update the HTML elements with the retrieved data
+  document.getElementById("longitude").textContent = longitude;
+  document.getElementById("latitude").textContent = latitude;
+  document.getElementById("district").textContent = district;
+  document.getElementById("province").textContent = province;
+  document.getElementById("sub-district").textContent = subDistrict;
+  document.getElementById("village").textContent = village;
+}
 
 // Function to fetch roads
 async function fetchRoads(longitude, latitude, maxDistance) {
@@ -217,7 +214,7 @@ async function fetchRegionGeoJSON(longitude, latitude) {
 
     return await response.json();
   } catch (error) {
-    console.error("Error fetching GeoJSON region:", error);
+    console.error("Error fetching region GeoJSON:", error);
     return null;
   }
 }
