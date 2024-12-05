@@ -216,12 +216,12 @@ function convertToGeoJSON(response) {
   };
 }
 
-//Properties
 
-document.getElementById("regionSearch").addEventListener("click", async () => {
-  // Ambil koordinat dari peta
-  const latitude = map.getCenter().lat; 
-  const longitude = map.getCenter().lng;
+//Properties
+// document.getElementById("regionSearch").addEventListener("click", async () => {
+//   // Ambil koordinat dari peta
+//   const latitude = map.getCenter().lat; 
+//   const longitude = map.getCenter().lng;
 
   console.log(`Longitude: ${longitude}, Latitude: ${latitude}`); // Debugging
 
@@ -260,6 +260,5 @@ document.getElementById("regionSearch").addEventListener("click", async () => {
   } catch (error) {
       console.error("Error fetching region data:", error);
       alert("Terjadi kesalahan saat mengambil data daerah.");
-  }
-});
+  };
 
