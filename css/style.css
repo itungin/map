@@ -2,16 +2,105 @@
 
 html,
 body {
-  margin: 0;
-  padding: 0;
+  background-color: #effafa; /* Light blue background */
+  font-family: Arial, sans-serif;
+  color: #333; /* Default text color */
+}
+/* Navbar styling */
+.navbar {
+  background-color: #34A0A4 !important; /* Navbar color */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Shadow for navbar */
+}
+
+.navbar-brand {
+  color: white !important; /* White text for brand name */
+}
+
+.navbar-brand:hover {
+  color: #ffecb3 !important; /* Light hover effect */
+}
+
+.navbar-toggler-icon {
+  background-color: white !important; /* Navbar toggler color */
+}
+
+.navbar-nav .nav-item .btn {
+  border-radius: 0.25rem;
+  font-weight: bold;
+}
+
+.navbar-nav .nav-item .btn-outline-primary {
+  color: #ffffff;
+  border-color: #D7F2F4;
+}
+
+.navbar-nav .nav-item .btn-outline-primary:hover {
+  background-color: #4c4c4c;
+  color: white;
+}
+
+/* Card styling */
+.card {
+  background-color: white; /* White background for the card */
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow around card */
+}
+
+.card-title {
+  color: #34A0A4; /* Card title color */
+  font-weight: bold;
+}
+
+/* Region info styling */
+#region-info {
+  background-color: #f8f9fa; /* Light gray background for region info */
+  border: 1px solid #ccc; /* Border for the region info box */
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
+}
+
+#region-info p {
+  font-size: 14px;
+}
+
+#region-info p strong {
+  color: #34A0A4; /* Make the labels stand out */
+}
+
+/* Button styles */
+.btn-hover-primary {
+  transition: all 0.3s ease;
+}
+
+.btn-hover-primary:hover {
+  background-color: #34A0A4;
+  color: white;
+}
+
+/* Map container */
+#map {
   width: 100%;
-  height: 100%;
-  font-family: "Roboto", Arial, sans-serif;
+  height: 400px; /* Set map height */
+  background-color: #D7F2F4; /* Optional: background color for map area */
+}
+
+/* Sidebar and layout spacing */
+.mt-3 {
+  margin-top: 1rem;
+}
+
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+.w-100 {
+  width: 100% !important;
 }
 
 .header {
   background-color: #004d40;
-  color: #fff;
+  color: #fe0000;
   text-align: center;
   padding: 10px 0;
   font-size: 24px;
