@@ -220,8 +220,10 @@ function convertToGeoJSON(response) {
 
 document.getElementById("regionSearch").addEventListener("click", async () => {
   // Ambil koordinat dari peta
-  const latitude = ""; // Masukkan cara mendapatkan latitude dari peta
-  const longitude = ""; // Masukkan cara mendapatkan longitude dari peta
+  const latitude = map.getCenter().lat; 
+  const longitude = map.getCenter().lng;
+
+  console.log(`Longitude: ${longitude}, Latitude: ${latitude}`); // Debugging
 
   try {
       // Panggil API dengan latitude & longitude
@@ -241,6 +243,7 @@ document.getElementById("regionSearch").addEventListener("click", async () => {
       }
 
       const data = await response.json();
+      console.log("Response data:", data); // Debugging
 
       // Pastikan data memiliki fitur
       if (data.features && data.features.length > 0) {
@@ -259,3 +262,4 @@ document.getElementById("regionSearch").addEventListener("click", async () => {
       alert("Terjadi kesalahan saat mengambil data daerah.");
   }
 });
+
