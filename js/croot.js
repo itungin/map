@@ -164,7 +164,7 @@ async function fetchRoads(longitude, latitude, maxDistance) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        login: token,
+        Login: token,
       },
       body: JSON.stringify({
         long: longitude,
@@ -202,7 +202,7 @@ async function fetchRegionGeoJSON(longitude, latitude) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        login: token,
+        Login: token,
       },
       body: JSON.stringify({
         long: longitude,
