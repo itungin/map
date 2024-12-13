@@ -160,6 +160,23 @@ function updateRegionInfo() {
 // Function to fetch roads
 async function fetchRoads(longitude, latitude, maxDistance) {
   try {
+    const token = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("login="))
+      ?.split("=")[1];
+
+    if (!token) {
+      Swal.fire({
+        title: "Authentication Error",
+        text: "You must be logged in to perform this action!",
+        icon: "error",
+        confirmButtonText: "Go to Login",
+      }).then(() => {
+        window.location.href = "https://itung.in.my.id/login.html";
+      });
+      throw new Error("Token is missing in cookies!");
+    }
+
     const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/itungin/roads", {
       method: "POST",
       headers: {
@@ -198,6 +215,23 @@ function displayRoads(geoJSON) {
 
 async function fetchRegionGeoJSON(longitude, latitude) {
   try {
+    const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("login="))
+    ?.split("=")[1];
+
+  if (!token) {
+    Swal.fire({
+      title: "Authentication Error",
+      text: "You must be logged in to perform this action!",
+      icon: "error",
+      confirmButtonText: "Go to Login",
+    }).then(() => {
+      window.location.href = "https://itung.in.my.id/login.html";
+    });
+    throw new Error("Token is missing in cookies!");
+  }
+  
     const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/itungin/region", {
       method: "POST",
       headers: {
