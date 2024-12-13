@@ -6,6 +6,11 @@ import Feature from "https://cdn.skypack.dev/ol/Feature.js";
 import GeoJSON from "https://cdn.skypack.dev/ol/format/GeoJSON.js";
 import { toLonLat } from "https://cdn.skypack.dev/ol/proj.js";
 import { Style, Stroke, Icon, Fill } from "https://cdn.skypack.dev/ol/style.js";
+import Swal from "https://cdn.jsdelivr.net/npm/sweetalert2@11/src/sweetalert2.js";
+import {addCSS} from "https://cdn.jsdelivr.net/gh/jscroot/lib@0.0.9/element.js";
+
+addCSS("https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.css");
+
 
 // Sources and layers
 const roadsSource = new VectorSource();
@@ -231,7 +236,7 @@ async function fetchRegionGeoJSON(longitude, latitude) {
     });
     throw new Error("Token is missing in cookies!");
   }
-  
+
     const response = await fetch("https://asia-southeast2-awangga.cloudfunctions.net/itungin/region", {
       method: "POST",
       headers: {
